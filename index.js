@@ -3,6 +3,7 @@ const cluster = require('cluster');
 // is the file being executed in master mode?
 if (cluster.isMaster) {
     cluster.fork();
+    cluster.fork();
 } else {
     const express = require('express');
     const app = express();
