@@ -1,3 +1,4 @@
 /cluster_and_thread/node_modules
 /cluster_and_thread/package-lock.json
 /cluster_and_thread/node.code-workspace
+.DS_Store
