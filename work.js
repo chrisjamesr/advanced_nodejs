@@ -1,8 +1,11 @@
-const {Worker} = require('worker_threads');
+const {Worker, parentPort} = require('worker_threads');
 
 console.log('worker function ')
-const { parentPort } = require('worker_threads');
 parentPort.on('message', function (message){
-    console.log("1: message received", message)
+    let counter = 0;
+    while (counter < 1e9){
+        counter++;
+    }
+    parentPort.postMessage({counter})
 });
-parentPort.postMessage({msg: '2: response!'});    
+
