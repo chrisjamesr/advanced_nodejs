@@ -2,36 +2,19 @@ const express = require('express');
 const app = express();
 const crypto = require('crypto') 
 const { Worker } = require('worker_threads');
-
+let count = 1
 app.get('/', (req, res) => {
-    // const worker = new Worker(`()=> {  
-    //     const { parentPort } = require('worker_threads');
-    //     parentPort.on('message', function (message){
-    //         console.log(message);
-    //         let counter = 0;
-    //         console.log('counting');
-    //         while(counter < 1e9 ){ counter ++; };
-    //     });
-    //     parentPort.postMessage(counter)
-    // }`, {eval: true});
-
-    const worker = new Worker(`
-        console.log('worker function ')
-        const { parentPort } = require('worker_threads');
-        parentPort.on('message', function (message){
-            let counter = 0;
-            while (counter < 1e9){
-                counter++;
-            }
-            parentPort.postMessage({counter})
-        });
-        //parentPort.postMessage('response from worker');`
-        , {eval:true})
-
-    worker.postMessage('start counting!')
-
-    worker.on('message', message => res.send(message));
-
+// create new worker to execude code in worker.js file
+    const worker = new Worker('./work.js');
+// designates main thread response to incoming message from worker
+    worker.on('message', message => {
+        console.log('message received');
+// send worker message as server response
+        res.send(`<h1>Counter: ${message.counter+count}</h1>`);
+    });
+// post message to worker    
+    worker.postMessage('start counting!');
+    count++;
 });
 
 app.get('/fast', (req, res) => {
