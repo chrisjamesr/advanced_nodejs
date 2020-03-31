@@ -19,13 +19,17 @@ app.get('/', (req, res) => {
         console.log('worker function ')
         const { parentPort } = require('worker_threads');
         parentPort.on('message', function (message){
-            console.log("1: message received", message)
+            let counter = 0;
+            while (counter < 1e9){
+                counter++;
+            }
+            parentPort.postMessage({counter})
         });
-        parentPort.postMessage('response from worker');`
+        //parentPort.postMessage('response from worker');`
         , {eval:true})
 
     worker.postMessage('start counting!')
-    
+
     worker.on('message', message => res.send(message));
 
 });
