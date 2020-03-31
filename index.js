@@ -1,11 +1,33 @@
 const express = require('express');
 const app = express();
-const crypto = require('crypto')
+const crypto = require('crypto') 
+const { Worker } = require('worker_threads');
 
 app.get('/', (req, res) => {
-    crypto.pbkdf2('a', 'b', 10000, 512, 'sha512', () => {
-        res.send('Hi there');
-    });
+    // const worker = new Worker(`()=> {  
+    //     const { parentPort } = require('worker_threads');
+    //     parentPort.on('message', function (message){
+    //         console.log(message);
+    //         let counter = 0;
+    //         console.log('counting');
+    //         while(counter < 1e9 ){ counter ++; };
+    //     });
+    //     parentPort.postMessage(counter)
+    // }`, {eval: true});
+
+    const worker = new Worker(`
+        console.log('worker function ')
+        const { parentPort } = require('worker_threads');
+        parentPort.on('message', function (message){
+            console.log("1: message received", message)
+        });
+        parentPort.postMessage('response from worker');`
+        , {eval:true})
+
+    worker.postMessage('start counting!')
+    
+    worker.on('message', message => res.send(message));
+
 });
 
 app.get('/fast', (req, res) => {
